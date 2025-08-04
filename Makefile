@@ -1,7 +1,7 @@
 # Makefile by Matheus Souza (github.com/mfbsouza)
 
 # project name
-PROJECT  := app
+PROJECT  := snake_game
 
 # paths
 BUILDDIR := ./target

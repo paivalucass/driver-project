@@ -1,18 +1,68 @@
-#include <stdio.h>	/* printf */
-#include <stdlib.h>	/* malloc, atoi, rand... */
-#include <string.h>	/* memcpy, strlen... */
-#include <stdint.h>	/* uints types */
-#include <sys/types.h>	/* size_t ,ssize_t, off_t... */
-#include <unistd.h>	/* close() read() write() */
-#include <fcntl.h>	/* open() */
-#include <sys/ioctl.h>	/* ioctl() */
-#include <errno.h>	/* error codes */
+#include <stdio.h>
+#include <string>
+#include <iostream>
+#include <cstdio>
+#include <algorithm>
+#include <unistd.h>
+#include <bits/stdc++.h>
+#include "input.h"
+#include "snake.h"
+#include "snake_map.h"
+#include <utility>
+#include "macros.h"
 
-// ioctl commands defined for the pci driver header
-#include "ioctl_cmds.h"
+using namespace std;
 
-int main(int argc, char** argv)
+Snake snake;
+SnakeMap snake_map(&snake);
+
+void initialize()
 {
-	printf("hello world\n");
-	return 0;
+    input_init();
+    input_enter_off();
+}
+
+bool is_game_end()
+{
+    bool result = false;
+    pair<int, int> snake_head = snake.snake_head;
+    if (snake_head.first < 0 || snake_head.first >= MAP_HEIGHT || snake_head.second < 0 || snake_head.second >= MAP_WIDTH)
+    {
+        result = true;
+    }
+    if (snake.is_dead)
+    {
+        result = true;
+    }
+    return result;
+}
+
+void game_over()
+{
+    cout << "GAME IS OVER" << endl;
+}
+
+void start_game()
+{
+    while (true)
+    {
+        snake.update_movement();
+        if (is_game_end())
+        {
+            game_over();
+            break;
+        }
+        snake_map.redraw();
+
+        usleep(PAUSE_LENGTH);
+
+        snake.validate_direction();
+    }
+}
+
+int main()
+{
+    initialize();
+    start_game();
+    return 0;
 }
