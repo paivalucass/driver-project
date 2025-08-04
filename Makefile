@@ -4,7 +4,7 @@
 PROJECT  := snake_game
 
 # paths
-BUILDDIR := ./target
+BUILDDIR := ./snake_game
 DBGDIR   := $(BUILDDIR)/debug
 RELDIR   := $(BUILDDIR)/release
 INCDIR   := ./include
