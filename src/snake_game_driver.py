@@ -2,7 +2,7 @@
 import pygame
 import time
 import random
-from driver import read_button, PATH, BUTTONS_OPTIONS, write_display
+from utils import read_button, PATH, BUTTONS_OPTIONS, write_display
 
 # Driver Imports 
 import os, sys
