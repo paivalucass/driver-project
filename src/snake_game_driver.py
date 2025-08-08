@@ -2,6 +2,7 @@
 import pygame
 import time
 import random
+from driver import read_button, PATH, BUTTONS_OPTIONS, write_display
 
 # Driver Imports 
 import os, sys
@@ -20,12 +21,24 @@ red = pygame.Color(255, 0, 0)
 green = pygame.Color(0, 255, 0)
 blue = pygame.Color(0, 0, 255)
 
+if len(sys.argv) < 2:
+        print("Error: expected more command line arguments")
+        print("Syntax: %s </dev/device_file>"%sys.argv[0])
+        exit(1)
+
+fd = os.open(sys.argv[1], os.O_RDWR)
+
 # Initialising pygame
 pygame.init()
 
 # Initialise game window
-pygame.display.set_caption('GeeksforGeeks Snakes')
+pygame.display.set_caption('CIn Snake Game')
 game_window = pygame.display.set_mode((window_x, window_y))
+
+# Declare Image
+background_img = pygame.image.load('paysandu-logo-escudo-1.png').convert()
+background_img = pygame.transform.scale(background_img, (window_x, window_y))
+
 
 # FPS (frames per second) controller
 fps = pygame.time.Clock()
@@ -53,6 +66,7 @@ change_to = direction
 # initial score
 score = 0
 
+
 # displaying Score function
 def show_score(choice, color, font, size):
   
@@ -71,6 +85,15 @@ def show_score(choice, color, font, size):
     game_window.blit(score_surface, score_rect)
 
 # game over function
+
+def read_key_from_driver():
+    
+    ioctl(fd, RD_PBUTTONS)
+    red = os.read(fd, 4); # read 4 bytes and store in red var
+    value = int.from_bytes(raw, 'little')
+    
+    return value
+    
 def game_over():
   
     # creating font object my_font
@@ -98,6 +121,8 @@ def game_over():
     # deactivating pygame library
     pygame.quit()
     
+    os.close(fd)
+    
     # quit the program
     quit()
 
@@ -106,17 +131,11 @@ def game_over():
 while True:
     
     # handling key events
-    for event in pygame.event.get():
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_UP:
-                change_to = 'UP'
-            if event.key == pygame.K_DOWN:
-                change_to = 'DOWN'
-            if event.key == pygame.K_LEFT:
-                change_to = 'LEFT'
-            if event.key == pygame.K_RIGHT:
-                change_to = 'RIGHT'
 
+    buttons = read_button(fd, show_output_msg=True)
+    
+    change_to = buttons.get(buttons, None)
+        
     # If two keys pressed simultaneously
     # we don't want snake to move into two 
     # directions simultaneously
@@ -154,12 +173,12 @@ while True:
                           random.randrange(1, (window_y//10)) * 10]
         
     fruit_spawn = True
-    game_window.fill(black)
+    game_window.blit(background_img, (0, 0))
     
     for pos in snake_body:
         pygame.draw.rect(game_window, green,
                          pygame.Rect(pos[0], pos[1], 10, 10))
-    pygame.draw.rect(game_window, white, pygame.Rect(
+    pygame.draw.rect(game_window, red, pygame.Rect(
         fruit_position[0], fruit_position[1], 10, 10))
 
     # Game Over conditions
@@ -174,10 +193,12 @@ while True:
             game_over()
 
     # displaying score continuously
+    
+    write_display(fd, score)
     show_score(1, white, 'times new roman', 20)
 
     # Refresh game screen
     pygame.display.update()
 
     # Frame Per Second /Refresh Rate
-    fps.tick(snake_speed)
+    fps.tick(snake_speed)   
