@@ -2,7 +2,7 @@
 import pygame
 import time
 import random
-from utils import read_button, PATH, BUTTONS_OPTIONS, write_display
+from utils import read_button, read_switch, PATH, BUTTONS_OPTIONS, SWITCHES_OPTIONS, write_display, read_switch
 
 # Driver Imports 
 import os, sys
@@ -86,14 +86,21 @@ def show_score(choice, color, font, size):
 
 # game over function
 
-def read_key_from_driver():
-    
-    ioctl(fd, RD_PBUTTONS)
-    red = os.read(fd, 4); # read 4 bytes and store in red var
-    value = int.from_bytes(raw, 'little')
-    
-    return value
-    
+# Add a helper to reset all game state when switch 0 is pressed
+def reset_game():
+    global snake_position, snake_body, fruit_position, fruit_spawn, direction, change_to, score
+    # Reset positions and state
+    snake_position = [100, 50]
+    snake_body = [[100, 50], [90, 50], [80, 50], [70, 50]]
+    fruit_position = [random.randrange(1, (window_x//10)) * 10,
+                      random.randrange(1, (window_y//10)) * 10]
+    fruit_spawn = True
+    direction = 'RIGHT'
+    change_to = direction
+    score = 0
+    # Update 7-seg display immediately
+    write_display(fd, str(score))
+
 def game_over():
   
     # creating font object my_font
@@ -133,8 +140,12 @@ while True:
     # handling key events
 
     buttons = read_button(fd, show_output_msg=True)
+
+    switches = read_switch(fd, show_output_msg=True)
     
     change_to = BUTTONS_OPTIONS.get(buttons, None)
+
+    switch_change_to = SWITCHES_OPTIONS.get(switches, None)
         
     # If two keys pressed simultaneously
     # we don't want snake to move into two 
@@ -147,6 +158,9 @@ while True:
         direction = 'LEFT'
     if change_to == 'RIGHT' and direction != 'LEFT':
         direction = 'RIGHT'
+
+    if switch_change_to == 'RESET':
+        reset_game()
 
     # Moving the snake
     if direction == 'UP':
@@ -201,4 +215,4 @@ while True:
     pygame.display.update()
 
     # Frame Per Second /Refresh Rate
-    fps.tick(snake_speed)   
+    fps.tick(snake_speed)

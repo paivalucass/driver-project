@@ -5,17 +5,23 @@ from time import sleep
 # TODO: Verificar esse número
 RD_PBUTTONS = 24930
 DISPLAY_L = 24931
+SWITCH = 24929
 
 # TODO: Path do driver (verificar)
 PATH = '/dev/mydev'
 
 # TODO: Verificar quais valores os botões geram quando pressionados 
 BUTTONS_OPTIONS = {
-    '0b1110': "UP", 
-    '0b1101': "LEFT",
-    '0b1011': "RIGHT",
-    '0b111': "DOWN",
+    '0b1011': "UP", 
+    '0b111': "LEFT",
+    '0b1110': "RIGHT",
+    '0b1101': "DOWN",
     '0b1111': "IDLE",
+}
+
+SWITCHES_OPTIONS = {
+    '0b100000000000000000': "RESET",
+    '0b000000000000000000': "IDLE"
 }
 
 # TODO: Verificar quais valores são necessários para mostrar cada número decimal
@@ -45,7 +51,30 @@ def read_button(fd, show_output_msg):
         print(f'>>> button {button}')
 
     return button
-    # TODO: Verificar quais valores são necessários para mostrar cada número decimal
+
+# def read_switch(fd, pos):
+#     ioctl(fd, SW)
+#     sw_pos = (0x1<<pos)
+#     os.read(fd, 4)
+#     ret_sw = os.read(fd, 4)
+#     return 1 if (sw_pos & int.from_bytes(ret_sw, 'little')) > 0 else 0
+#     # sw = os.read(fd, 4)
+#     # sw = bin(int.from_bytes(sw, 'little'))
+
+#     # if show_output_msg:
+#     #     print(f'>>> switch {sw}')
+
+#     # return sw
+
+def read_switch(fd, show_output_msg):
+    ioctl(fd, SWITCH)
+    switch = os.read(fd, 4)
+    switch = bin(int.from_bytes(switch, 'little'))
+
+    if show_output_msg:
+        print(f'>>> switch {switch}')
+
+    return switch   
 
 def write_display(fd, ar_num):
 
