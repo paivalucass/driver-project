@@ -47,13 +47,6 @@ def read_button(fd, show_output_msg):
     return button
     # TODO: Verificar quais valores são necessários para mostrar cada número decimal
 
-def write_display(fd, number):
-    """Write a decimal number (0–9) to the 7-segment display."""
-    pattern = SEGMENT_MAP.get(number, 0)  # Default 0 if number not found
-    ioctl(fd, DISPLAY_L)
-    os.write(fd, pattern.to_bytes(4, 'little'))
-    
-
 def write_display(fd, ar_num):
 
     ioctl(fd, DISPLAY_L)
@@ -63,7 +56,7 @@ def write_display(fd, ar_num):
         data = display_convert(data, num, 8)
     os.write(fd, data.to_bytes(4, 'little'))
     
-def display_convert(fd, data, num, ind):
+def display_convert(data, num, ind):
     data = data << ind
     if num == '0':
         data = data | HEX_0

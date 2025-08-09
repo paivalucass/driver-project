@@ -134,7 +134,7 @@ while True:
 
     buttons = read_button(fd, show_output_msg=True)
     
-    change_to = buttons.get(buttons, None)
+    change_to = BUTTONS_OPTIONS.get(buttons, None)
         
     # If two keys pressed simultaneously
     # we don't want snake to move into two 
@@ -194,7 +194,7 @@ while True:
 
     # displaying score continuously
     
-    write_display(fd, score)
+    write_display(fd, str(score))
     show_score(1, white, 'times new roman', 20)
 
     # Refresh game screen
