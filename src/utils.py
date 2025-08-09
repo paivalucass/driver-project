@@ -5,6 +5,7 @@ from time import sleep
 # TODO: Verificar esse número
 RD_PBUTTONS = 24930
 DISPLAY_L = 24931
+DISPLAY_R = 24932
 SWITCH = 24929
 
 # TODO: Path do driver (verificar)
@@ -78,7 +79,7 @@ def read_switch(fd, show_output_msg):
 
 def write_display(fd, ar_num):
 
-    ioctl(fd, DISPLAY_L)
+    ioctl(fd, DISPLAY_R)
 
     data = 0
     for num in ar_num:
