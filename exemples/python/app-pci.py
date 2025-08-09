@@ -84,6 +84,7 @@ def main():
             if pressed and not last_pressed:
                 count = (count + 1) % 10000  # wraps at 9999 -> 0
                 write_right_display(fd, encode_number_to_4digits(count))
+                print(f"Display: {count:04d}")
             last_pressed = pressed
             # Simple debounce/poll interval
             time.sleep(0.02)
