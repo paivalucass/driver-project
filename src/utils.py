@@ -79,10 +79,14 @@ def read_switch(fd, show_output_msg):
 
 def write_display(fd, ar_num):
 
+    array = ['0', '0', '0', '0']
+
+    array[-len(ar_num):] = ar_num
+
     ioctl(fd, DISPLAY_R)
 
     data = 0
-    for num in ar_num:
+    for num in array:
         data = display_convert(data, num, 8)
     os.write(fd, data.to_bytes(4, 'little'))
     
