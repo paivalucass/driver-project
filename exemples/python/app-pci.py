@@ -25,15 +25,15 @@ def main():
         retval = os.write(fd, data.to_bytes(4, 'little'))
         print("wrote %d bytes"%retval)
 
+        ioctl(fd, RD_PBUTTONS)
+        red = os.read(fd, 4); # read 4 bytes and store in red var
+        print("red 0x%X"%int.from_bytes(red, 'little'))
         # data to write
-        data = 0x79404040;
+        data = red;
         ioctl(fd, WR_L_DISPLAY)
         retval = os.write(fd, data.to_bytes(4, 'little'))
         print("wrote %d bytes"%retval)
 
-        ioctl(fd, RD_PBUTTONS)
-        red = os.read(fd, 4); # read 4 bytes and store in red var
-        print("red 0x%X"%int.from_bytes(red, 'little'))
 
     os.close(fd)
 
